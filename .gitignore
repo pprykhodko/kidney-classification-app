@@ -280,3 +280,13 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,flask,jupyternotebooks,opencv
+
+# Dataset and training artifacts
+/data/
+/artifacts/
+*.zip
+*.keras
+*.h5
+
+# Optional local web environment
+/.venv-web/
