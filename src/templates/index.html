@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kidney CT Classification</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <main class="workspace">
+    <div class="layout">
+      <section class="panel upload-panel" aria-labelledby="upload-heading">
+        <h2 id="upload-heading">Upload a CT image</h2>
+        <p>Choose an image, run classification, and review the model's prediction.</p>
+        {% if error %}<div class="error" role="alert">{{ error }}</div>{% endif %}
+        <form action="{{ url_for('upload_file') }}" method="post" enctype="multipart/form-data">
+          <label for="image">CT image</label>
+          <input id="image" name="image" type="file" accept=".jpg,.jpeg,.png,.bmp" required aria-describedby="upload-help">
+          <p class="hint" id="upload-help">JPG, PNG, or BMP · Maximum 10 MB</p>
+          <button type="submit">Classify image</button>
+        </form>
+      </section>
+      <section class="panel result-panel" aria-labelledby="result-heading">
+        <h2 id="result-heading">Classification result</h2>
+        {% if result %}
+          <div class="prediction">
+            <div class="prediction-item">
+              <h3>Predicted class</h3>
+              <p class="prediction-value">{{ result.class_name }}</p>
+            </div>
+            <div class="prediction-item">
+              <h3>Model probability</h3>
+              <p class="prediction-value">{{ '%.1f'|format(result.probability * 100) }}%</p>
+            </div>
+          </div>
+          <img class="preview" src="data:image/png;base64,{{ preview }}" alt="Uploaded kidney CT image">
+          <h3 class="scores-heading">Class probabilities</h3>
+          <div class="scores">
+          {% for name, score in result.scores.items() %}
+            <div class="score">
+              <div class="score-label"><label for="score-{{ loop.index }}">{{ name }}</label><span>{{ '%.1f'|format(score * 100) }}%</span></div>
+              <meter id="score-{{ loop.index }}" min="0" max="1" value="{{ score }}">{{ '%.1f'|format(score * 100) }}%</meter>
+            </div>
+          {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty"><p>Your prediction will appear here.</p><span>Upload an image to see its class and probability.</span></div>
+        {% endif %}
+      </section>
+    </div>
+  </main>
+</body>
+</html>
